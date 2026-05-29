@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heredar la Tierra - Sembrar</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --cream: #f2e8c9;
+  --gold:  #b8860b;
+  --dark:  #1a0e06;
+}
+body {
+  background: #0d0a05;
+  font-family: 'Playfair Display', serif;
+  overflow: hidden;
+  cursor: crosshair;
+  user-select: none;
+  width: 100vw;
+  height: 100vh;
+}
+#scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+#scene-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('data:image/webp;base64,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');
+  background-size: cover;
+  background-position: center;
+}
+#title {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--cream);
+  font-family: 'UnifrakturMaguntia', Georgia, serif;
+  font-size: 3.5rem;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+  z-index: 10;
+  text-align: center;
+}
+#seed-panel {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 25px;
+  background: rgba(13,10,5,0.85);
+  border: 1px solid rgba(184,134,11,0.3);
+  padding: 15px 30px;
+  border-radius: 40px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+.seed-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid rgba(242,232,201,0.2);
+  background: #1a140a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.seed-btn img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+.seed-btn:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+}
+.seed-btn.active {
+  border-color: var(--cream);
+  background: var(--gold);
+  transform: translateY(-4px) scale(1.05);
+}
+.planted {
+  position: absolute;
+  z-index: 2;
+  transform-origin: bottom center;
+  animation: growIn 0.4s ease forwards;
+  pointer-events: none;
+}
+.planted img { width: 100%; height: 100%; object-fit: contain; }
+@keyframes growIn {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+#btn-next {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  background: var(--gold);
+  color: var(--cream);
+  border: 1px solid var(--cream);
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-family: 'Playfair Display', serif;
+  cursor: pointer;
+  border-radius: 5px;
+  z-index: 20;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  transition: background 0.2s;
+}
+#btn-next:hover {
+  background: #966f0a;
+}
+</style>
+</head>
+<body>
+
+<div id="scene">
+  <div id="scene-bg"></div>
+  <h1 id="title">Heredar la Tierra</h1>
+  
+  <a id="btn-next" href="Cosechar.html">Ir a Cosechar →</a>
+
+  <div id="seed-panel">
+    <div class="seed-btn active" data-seed="0"><img src="semilla1.png" alt="Semilla 1"></div>
+    <div class="seed-btn" data-seed="1"><img src="semilla2.png" alt="Semilla 2"></div>
+    <div class="seed-btn" data-seed="2"><img src="semilla3.png" alt="Semilla 3"></div>
+    <div class="seed-btn" data-seed="3"><img src="semilla4.png" alt="Semilla 4"></div>
+  </div>
+</div>
+
+<script>
+  const HORIZON_Y = 0.52;
+
+  const seedData = {
+    0: { src: 'semilla1.png', wr: 0.82 },
+    1: { src: 'semilla2.png', wr: 0.53 },
+    2: { src: 'semilla3.png', wr: 0.65 },
+    3: { src: 'semilla4.png', wr: 0.50 }
+  };
+
+  let sel = 0;
+  const btns = document.querySelectorAll('.seed-btn');
+  btns.forEach(b => {
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      btns.forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      sel = parseInt(b.getAttribute('data-seed'));
+    });
+  });
+
+  // Cargar lo guardado previamente en esta sesión si existe
+  let plantsStorage = JSON.parse(localStorage.getItem('plantedSeeds')) || [];
+  plantsStorage.forEach(p => drawSeed(p.x, p.y, p.type));
+
+  // Sonidos para la siembra
+  const audioFiles = ['t1.mp3', 't2.mp3', 't3.mp3', 't4.mp3'];
+  function playSound() {
+    const a = new Audio(audioFiles[Math.floor(Math.random() * audioFiles.length)]);
+    a.volume = 0.5;
+    a.play().catch(()=>{});
+  }
+
+  document.getElementById('scene').addEventListener('click', function(e) {
+    if (e.target.closest('#seed-panel') || e.target.closest('#btn-next')) return;
+    const rect = this.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (y < rect.height * HORIZON_Y) return;
+
+    drawSeed(x, y, sel);
+    playSound();
+
+    // Guardar coordenadas y tipo en localStorage
+    plantsStorage.push({ x, y, type: sel });
+    localStorage.setItem('plantedSeeds', JSON.stringify(plantsStorage));
+  });
+
+  function drawSeed(x, y, type) {
+    const scene = document.getElementById('scene');
+    const rect = scene.getBoundingClientRect();
+    const depth = Math.min(1, (y - rect.height * HORIZON_Y) / (rect.height * (1 - HORIZON_Y)));
+    const baseH = Math.round(10 + depth * 28);
+    const sd = seedData[type];
+    const w = Math.round(baseH * sd.wr);
+    const h = baseH;
+
+    const el = document.createElement('div');
+    el.className = 'planted';
+    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px;margin-left:-${w/2}px;margin-top:-${h}px;`;
+
+    const img = document.createElement('img');
+    img.src = sd.src;
+    el.appendChild(img);
+    scene.appendChild(el);
+  }
+</script>
+</body>
+</html>

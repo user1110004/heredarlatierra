@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Interactive</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="contenedor-casa">
+        <h1 class="titulo-proyecto">Casa</h1>
+
+        <div class="capa-cielo">
+            <video autoplay loop muted playsinline id="videoCielo">
+                <source src="cielo.mp4" type="video/mp4">
+                Tu navegador no soporta video.
+            </video>
+        </div>
+
+        <img src="casita.webp" alt="Casa de campo" class="fondo-casa" id="patio">
+
+        <div class="zona cocina" onclick="abrirVideo('https://player.vimeo.com/video/1196168689')"></div>
+        <div class="zona habitacion" onclick="abrirVideo('https://player.vimeo.com/video/1196167711')"></div>
+    </div>
+
+    <div id="modal-video" class="modal" onclick="cerrarVideo()">
+        <div class="contenido-modal" onclick="event.stopPropagation()">
+            <span class="cerrar-btn" onclick="cerrarVideo()">&times;</span>
+            <iframe id="vimeo-player" src="" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

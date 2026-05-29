@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Florecer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:wght@200;300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --dusk: #1a1f14;
+    --cream: #f5f0e8;
+    --warm: #d4c5a0;
+    --sage: #8a9e7a;
+  }
+
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+
+  body {
+    background: var(--dusk);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    cursor: crosshair;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* LAYOUT */
+  .stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* ---- LEFT ---- */
+  .poem-side {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 5vw 4rem 6vw;
+    z-index: 2;
+  }
+
+  /* TITLE */
+  .title-block {
+    position: absolute;
+    top: 3rem;
+    left: 6vw;
+    opacity: 0;
+    animation: fadeIn 1.8s ease forwards 0.3s;
+  }
+
+  .title-main {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    color: var(--cream);
+    line-height: 1;
+  }
+
+  /* STANZA */
+  .stanza-display {
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+  }
+
+  .stanza-text {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+    pointer-events: none;
+  }
+
+  .stanza-text.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    position: relative;
+  }
+
+  .stanza-text.exit {
+    opacity: 0;
+    transform: translateY(-16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .stanza-text::before {
+    content: '';
+    display: block;
+    width: 22px;
+    height: 0.5px;
+    background: rgba(138,158,122,0.6);
+    margin-bottom: 1.4rem;
+  }
+
+  .stanza-text p {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    line-height: 2;
+    color: var(--cream);
+    letter-spacing: 0.015em;
+  }
+
+  .stanza-text.coda p {
+    color: var(--warm);
+    font-style: italic;
+  }
+
+  /* CONTROLS */
+  .controls {
+    position: absolute;
+    bottom: 3rem;
+    left: 6vw;
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+    opacity: 0;
+    animation: fadeIn 1.8s ease forwards 1.2s;
+  }
+
+  .btn-nav {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+  }
+
+  .btn-nav:hover { opacity: 1; }
+  .btn-nav:disabled { opacity: 0.12; pointer-events: none; }
+
+  /* SVG arrow icons */
+  .btn-nav svg {
+    width: 36px;
+    height: 10px;
+    overflow: visible;
+  }
+
+  .progress {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(212,197,160,0.25);
+    transition: background 0.4s, transform 0.4s;
+    cursor: pointer;
+  }
+
+  .dot.active {
+    background: rgba(212,197,160,0.8);
+    transform: scale(1.4);
+  }
+
+  /* SOUND BUTTON */
+  .btn-sound {
+    position: absolute;
+    bottom: 3rem;
+    right: 3rem;
+    background: none;
+    border: 0.5px solid rgba(212,197,160,0.2);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+    transition: opacity 0.3s, border-color 0.3s;
+    z-index: 10;
+  }
+
+  .btn-sound:hover { opacity: 1; border-color: rgba(212,197,160,0.5); }
+  .btn-sound svg { width: 14px; height: 14px; }
+
+  /* ---- RIGHT: VIDEO ---- */
+  .video-side {
+    position: relative;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .video-side video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .video-side::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 10%; bottom: 10%;
+    width: 0.5px;
+    background: linear-gradient(to bottom, transparent, rgba(212,197,160,0.1), transparent);
+    z-index: 3;
+  }
+
+  /* CURSOR */
+  #cursor-dot {
+    position: fixed;
+    width: 5px; height: 5px;
+    background: rgba(212,197,160,0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+  }
+
+  #cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 0.5px solid rgba(138,158,122,0.35);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9997;
+    transform: translate(-50%, -50%);
+  }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  @media (max-width: 700px) {
+    html, body { overflow: auto; }
+    .stage { grid-template-columns: 1fr; grid-template-rows: 50vh auto; height: auto; }
+    .video-side { order: -1; height: 50vh; }
+    .poem-side { padding: 3rem 2rem 6rem; min-height: 50vh; }
+    .title-block { left: 2rem; }
+    .controls { left: 2rem; }
+    .btn-sound { right: 2rem; }
+    #cursor-dot, #cursor-ring { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<div class="stage">
+
+  <!-- LEFT: POEM -->
+  <div class="poem-side">
+
+    <div class="title-block">
+      <h1 class="title-main">Florecer</h1>
+    </div>
+
+    <div class="stanza-display" id="stanza-display">
+
+      <div class="stanza-text active" data-index="0">
+        <p>Hay un instante pequeño<br>
+        en el que las plantas despiertan.<br>
+        No ocurre con ruido,<br>
+        ni con la fuerza del trueno,<br>
+        sino con la paciencia verde<br>
+        de quien aprende a abrirse hacia la luz.</p>
+      </div>
+
+      <div class="stanza-text" data-index="1">
+        <p>Entonces aparece el colibrí.<br>
+        Llega como una chispa suspendida,<br>
+        como un latido diminuto<br>
+        capaz de sostener el aire.</p>
+      </div>
+
+      <div class="stanza-text" data-index="2">
+        <p>Sus alas no parecen alas,<br>
+        parecen agua temblando,<br>
+        parecen el rumor invisible<br>
+        que hace florecer los jardines.</p>
+      </div>
+
+      <div class="stanza-text" data-index="3">
+        <p>Va de flor en flor<br>
+        como quien lleva mensajes secretos.<br>
+        Rozando los pétalos,<br>
+        despierta el polen dormido<br>
+        y deja en cada planta<br>
+        la posibilidad de otra vida.</p>
+      </div>
+
+      <div class="stanza-text" data-index="4">
+        <p>Después se detiene.<br>
+        Un baño breve entre el agua,<br>
+        plumas mojadas bajo el sol,<br>
+        el cuerpo vibrando todavía<br>
+        como si guardara dentro<br>
+        el temblor del viento.</p>
+      </div>
+
+      <div class="stanza-text coda" data-index="5">
+        <p>Y mientras seca sus alas,<br>
+        alguna flor, en silencio,<br>
+        termina de abrirse.</p>
+      </div>
+
+    </div>
+
+    <div class="controls">
+      <!-- flecha izquierda -->
+      <button class="btn-nav prev" id="btn-prev" disabled aria-label="Estrofa anterior">
+        <svg viewBox="0 0 36 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="36" y1="5" x2="0" y2="5" stroke="rgba(212,197,160,0.7)" stroke-width="0.6"/>
+          <polyline points="8,1 1,5 8,9" stroke="rgba(212,197,160,0.7)" stroke-width="0.6" fill="none"/>
+        </svg>
+      </button>
+
+      <div class="progress" id="progress"></div>
+
+      <!-- flecha derecha -->
+      <button class="btn-nav next" id="btn-next" aria-label="Siguiente estrofa">
+        <svg viewBox="0 0 36 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="0" y1="5" x2="36" y2="5" stroke="rgba(212,197,160,0.7)" stroke-width="0.6"/>
+          <polyline points="28,1 35,5 28,9" stroke="rgba(212,197,160,0.7)" stroke-width="0.6" fill="none"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: VIDEO -->
+  <div class="video-side">
+    <video id="mainVideo" autoplay muted loop playsinline preload="auto">
+      <source src="fondo.webm" type="video/webm">
+    </video>
+
+    <!-- Botón sonido -->
+    <button class="btn-sound" id="btn-sound" aria-label="Activar sonido">
+      <svg id="icon-muted" viewBox="0 0 24 24" fill="none" stroke="rgba(212,197,160,0.9)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <line x1="23" y1="9" x2="17" y2="15"/>
+        <line x1="17" y1="9" x2="23" y2="15"/>
+      </svg>
+      <svg id="icon-sound" viewBox="0 0 24 24" fill="none" stroke="rgba(212,197,160,0.9)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+      </svg>
+    </button>
+  </div>
+
+</div>
+
+<script>
+  // --- POEM NAVIGATION ---
+  const stanzas = document.querySelectorAll('.stanza-text');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const progressEl = document.getElementById('progress');
+  const total = stanzas.length;
+  let current = 0;
+
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    progressEl.appendChild(dot);
+  }
+
+  function goTo(index) {
+    if (index === current) return;
+    const prev = current;
+    current = index;
+    stanzas[prev].classList.add('exit');
+    stanzas[prev].classList.remove('active');
+    setTimeout(() => stanzas[prev].classList.remove('exit'), 600);
+    stanzas[current].classList.add('active');
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === total - 1;
+  }
+
+  btnNext.addEventListener('click', () => { if (current < total - 1) goTo(current + 1); });
+  btnPrev.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { if (current < total - 1) goTo(current + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { if (current > 0) goTo(current - 1); }
+  });
+
+  // --- SOUND TOGGLE ---
+  const video = document.getElementById('mainVideo');
+  const btnSound = document.getElementById('btn-sound');
+  const iconMuted = document.getElementById('icon-muted');
+  const iconSound = document.getElementById('icon-sound');
+  let soundOn = false;
+
+  btnSound.addEventListener('click', () => {
+    soundOn = !soundOn;
+    video.muted = !soundOn;
+    iconMuted.style.display = soundOn ? 'none' : 'block';
+    iconSound.style.display = soundOn ? 'block' : 'none';
+    // algunos navegadores requieren play() tras unmute
+    if (soundOn) video.play().catch(() => {});
+  });
+
+  // --- CURSOR ---
+  const dot  = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+  });
+
+  (function animateRing() {
+    rx += (mx - rx) * 0.1;
+    ry += (my - ry) * 0.1;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animateRing);
+  })();
+</script>
+</body>
+</html>

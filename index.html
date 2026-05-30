@@ -1,348 +1,119 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Heredar la Tierra</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contenedor Principal - Heredar la tierra</title>
   <style>
-    :root {
-      --bg: #0e1208;
-      --sidebar-bg: #141a09;
-      --sidebar-width: 240px;
-      --accent: #a8c26a;
-      --accent-dim: #6a7f3e;
-      --text: #d6e0b8;
-      --text-muted: #7a9050;
-      --active-bg: #1e2e10;
-      --border: #2a3a14;
-      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Lato', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* ── SIDEBAR ── */
-    #sidebar {
-      width: var(--sidebar-width);
-      min-width: var(--sidebar-width);
-      background: var(--sidebar-bg);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      transition: transform var(--transition);
-      z-index: 100;
-      position: relative;
-    }
-
-    .sidebar-header {
-      padding: 32px 24px 24px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .sidebar-header .logo-icon {
-      font-size: 28px;
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    .sidebar-header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--accent);
-      line-height: 1.3;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-
-    .sidebar-header p {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    nav {
-      flex: 1;
-      padding: 16px 0;
-      overflow-y: auto;
-    }
-
-    nav a {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 24px;
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      transition: all var(--transition);
-      border-left: 3px solid transparent;
-      cursor: pointer;
-    }
-
-    nav a:hover {
-      color: var(--text);
-      background: rgba(168, 194, 106, 0.07);
-    }
-
-    nav a.active {
-      color: var(--accent);
-      background: var(--active-bg);
-      border-left-color: var(--accent);
-      font-weight: 700;
-    }
-
-    nav a .nav-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 11px;
-      color: var(--accent-dim);
-      min-width: 18px;
-      opacity: 0.7;
-    }
-
-    nav a.active .nav-num {
-      opacity: 1;
-      color: var(--accent);
-    }
-
-    .sidebar-footer {
-      padding: 16px 24px;
-      border-top: 1px solid var(--border);
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-    }
-
-    /* ── TOGGLE BUTTON (móvil) ── */
-    #toggle-btn {
-      display: none;
-      position: fixed;
-      top: 14px;
-      left: 14px;
-      z-index: 200;
-      background: var(--accent);
-      border: none;
-      color: var(--bg);
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      font-size: 18px;
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-    }
-
-    /* ── MAIN CONTENT ── */
-    #main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    #topbar {
-      height: 48px;
-      background: var(--sidebar-bg);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 0 24px;
-      gap: 10px;
-    }
-
-    #topbar .breadcrumb {
-      font-size: 12px;
-      color: var(--text-muted);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    #topbar .breadcrumb span {
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    /* Indicador de carga */
-    #loading {
-      display: none;
-      position: absolute;
-      top: 48px;
-      left: var(--sidebar-width);
-      right: 0;
-      bottom: 0;
-      background: var(--bg);
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 16px;
-      z-index: 50;
-    }
-
-    #loading.visible { display: flex; }
-
-    .spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    #loading p {
-      font-size: 12px;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    /* ── IFRAME ── */
-    #content-frame {
-      flex: 1;
-      border: none;
+    /* Estilos globales */
+    html, body {
+      margin: 0;
+      padding: 0;
       width: 100%;
       height: 100%;
-      background: #fff;
+      overflow: hidden; /* Evita barras de scroll dobles en la pantalla */
+      font-family: Arial, sans-serif;
     }
 
-    /* ── OVERLAY MÓVIL ── */
-    #overlay {
-      display: none;
+    /* Botón para abrir/cerrar la barra lateral (Menú Hamburguesa) */
+    .btn-menu {
       position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 90;
+      top: 15px;
+      left: 15px;
+      z-index: 100;
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 4px;
     }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 700px) {
-      #toggle-btn { display: flex; }
-      #sidebar {
-        position: fixed;
-        top: 0; left: 0; bottom: 0;
-        transform: translateX(-100%);
-      }
-      #sidebar.open { transform: translateX(0); }
-      #overlay.open { display: block; }
-      #loading { left: 0; }
+    /* Estructura de la Sidebar (Oculta por defecto a la izquierda) */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: #222;
+      padding-top: 20px;
+      transition: left 0.3s ease; /* Desplazamiento suave */
+      z-index: 99;
+    }
+
+    /* Estilo para el título del menú */
+    .sidebar-titulo {
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 15px 25px;
+      margin-top: 40px; /* Espacio para que no choque con el botón ☰ */
+      border-bottom: 2px solid #444;
+      letter-spacing: 1px;
+    }
+
+    /* Listado de navegación */
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li a {
+      display: block;
+      padding: 15px 25px;
+      color: #bbb;
+      text-decoration: none;
+      font-size: 16px;
+      border-bottom: 1px solid #333;
+    }
+
+    /* Cambio de color al pasar el cursor */
+    .sidebar ul li a:hover {
+      background-color: #333;
+      color: white;
+    }
+
+    /* Clase que activa la animación para mostrar la barra */
+    .sidebar.activa {
+      left: 0;
+    }
+
+    /* El visor donde se proyectarán tus páginas independientes */
+    .visor-paginas {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Botón hamburguesa (móvil) -->
-  <button id="toggle-btn" aria-label="Abrir menú">☰</button>
+  <button class="btn-menu" onclick="toggleSidebar()">☰</button>
 
-  <!-- Overlay móvil -->
-  <div id="overlay"></div>
-
-  <!-- SIDEBAR -->
-  <aside id="sidebar">
-    <div class="sidebar-header">
-      <span class="logo-icon">🌱</span>
-      <h1>Heredar la Tierra</h1>
-      <p>Navegación</p>
-    </div>
-
-    <nav id="nav-links">
-      <a href="#" data-src="PAG 1/Heredar.html" data-label="Página 1" class="active">
-        <span class="nav-num">01</span> Página 1
-      </a>
-      <a href="#" data-src="PAG 2/index.html" data-label="Página 2">
-        <span class="nav-num">02</span> Página 2
-      </a>
-      <a href="#" data-src="PAG 3/index.html" data-label="Página 3">
-        <span class="nav-num">03</span> Página 3
-      </a>
-      <a href="#" data-src="PAG 4/florecer.html" data-label="Página 4">
-        <span class="nav-num">04</span> Página 4
-      </a>
-      <a href="#" data-src="PAG 5/cosechar.html" data-label="Página 5">
-        <span class="nav-num">05</span> Página 5
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">heredarlatierra</div>
-  </aside>
-
-  <!-- CONTENIDO PRINCIPAL -->
-  <div id="main">
-    <div id="topbar">
-      <span class="breadcrumb">Sección: <span id="current-label">Página 1</span></span>
-    </div>
-
-    <div id="loading">
-      <div class="spinner"></div>
-      <p>Cargando…</p>
-    </div>
-
-    <iframe
-      id="content-frame"
-      src="PAG 1/index.html"
-      title="Contenido de la página"
-      allowfullscreen
-    ></iframe>
+  <div class="sidebar" id="miSidebar">
+    <div class="sidebar-titulo">heredar la tierra</div>
+    
+    <ul>
+      <li><a href="PAG 1/Heredar.html" target="pantalla" onclick="toggleSidebar()">Página 1</a></li>
+      <li><a href="PAG 2/index.html" target="pantalla" onclick="toggleSidebar()">Página 2</a></li>
+      <li><a href="PAG 3/index.html" target="pantalla" onclick="toggleSidebar()">Página 3</a></li>
+      <li><a href="PAG 4/florecer.html" target="pantalla" onclick="toggleSidebar()">Página 4</a></li>
+      <li><a href="PAG 5/cosechar.html" target="pantalla" onclick="toggleSidebar()">Página 5</a></li>
+    </ul>
   </div>
 
+  <iframe src="PAG%201/Heredar.html" name="pantalla" class="visor-paginas"></iframe>
+
   <script>
-    const links      = document.querySelectorAll('#nav-links a');
-    const frame      = document.getElementById('content-frame');
-    const loading    = document.getElementById('loading');
-    const labelEl    = document.getElementById('current-label');
-    const sidebar    = document.getElementById('sidebar');
-    const overlay    = document.getElementById('overlay');
-    const toggleBtn  = document.getElementById('toggle-btn');
-
-    function navigate(link) {
-      links.forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-      labelEl.textContent = link.dataset.label;
-
-      // Mostrar spinner
-      loading.classList.add('visible');
-      frame.src = link.dataset.src;
+    function toggleSidebar() {
+      var sidebar = document.getElementById("miSidebar");
+      sidebar.classList.toggle("activa");
     }
-
-    links.forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        navigate(link);
-        // Cerrar en móvil
-        sidebar.classList.remove('open');
-        overlay.classList.remove('open');
-      });
-    });
-
-    frame.addEventListener('load', () => {
-      loading.classList.remove('visible');
-    });
-
-    // Menú hamburguesa
-    toggleBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-      overlay.classList.toggle('open');
-    });
-
-    overlay.addEventListener('click', () => {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('open');
-    });
   </script>
+
 </body>
 </html>

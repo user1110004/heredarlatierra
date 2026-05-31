@@ -52,7 +52,7 @@
     z-index: 2;
   }
 
-  /* TITLE */
+  /* TITLE - NUEVA TIPOGRAFÍA IMPLEMENTADA */
   .title-block {
     position: absolute;
     top: 3rem;
@@ -62,12 +62,21 @@
   }
 
   .title-main {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(2.2rem, 4vw, 3.5rem);
-    color: var(--cream);
+    /* Nueva tipografía robusta e impacto retro */
+    font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
+    font-weight: normal; /* Arial Black ya es extra-gruesa por defecto */
+    font-style: normal;
+    font-size: clamp(2rem, 4.5vw, 3.8rem); /* Escala proporcional para el espacio del header */
+    color: #ebdcb9; /* Tono crema retro que combina con --warm */
+    text-transform: uppercase; /* Mayúsculas sostenidas */
+    letter-spacing: 2px;
     line-height: 1;
+    /* Efecto de borde negro marcado para mantener la estética uniforme */
+    text-shadow: 
+        3px 3px 0px #000, 
+       -1px -1px 0px #000, 
+        1px -1px 0px #000, 
+       -1px 1px 0px #000;
   }
 
   /* STANZA */
@@ -267,7 +276,6 @@
 
 <div class="stage">
 
-  <!-- LEFT: POEM -->
   <div class="poem-side">
 
     <div class="title-block">
@@ -326,7 +334,6 @@
     </div>
 
     <div class="controls">
-      <!-- flecha izquierda -->
       <button class="btn-nav prev" id="btn-prev" disabled aria-label="Estrofa anterior">
         <svg viewBox="0 0 36 10" fill="none" xmlns="http://www.w3.org/2000/svg">
           <line x1="36" y1="5" x2="0" y2="5" stroke="rgba(212,197,160,0.7)" stroke-width="0.6"/>
@@ -336,7 +343,6 @@
 
       <div class="progress" id="progress"></div>
 
-      <!-- flecha derecha -->
       <button class="btn-nav next" id="btn-next" aria-label="Siguiente estrofa">
         <svg viewBox="0 0 36 10" fill="none" xmlns="http://www.w3.org/2000/svg">
           <line x1="0" y1="5" x2="36" y2="5" stroke="rgba(212,197,160,0.7)" stroke-width="0.6"/>
@@ -347,13 +353,11 @@
 
   </div>
 
-  <!-- RIGHT: VIDEO -->
   <div class="video-side">
     <video id="mainVideo" autoplay muted loop playsinline preload="auto">
       <source src="fondo.webm" type="video/webm">
     </video>
 
-    <!-- Botón sonido -->
     <button class="btn-sound" id="btn-sound" aria-label="Activar sonido">
       <svg id="icon-muted" viewBox="0 0 24 24" fill="none" stroke="rgba(212,197,160,0.9)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
@@ -419,7 +423,6 @@
     video.muted = !soundOn;
     iconMuted.style.display = soundOn ? 'none' : 'block';
     iconSound.style.display = soundOn ? 'block' : 'none';
-    // algunos navegadores requieren play() tras unmute
     if (soundOn) video.play().catch(() => {});
   });
 

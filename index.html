@@ -11,109 +11,88 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; /* Evita barras de scroll dobles en la pantalla */
+      overflow: hidden; /* Evita scrolls dobles en la pantalla principal */
       font-family: Arial, sans-serif;
+      position: relative; /* Permite posicionar la barra encima del iframe */
     }
 
-    /* Botón para abrir/cerrar la barra lateral (Menú Hamburguesa) */
-    .btn-menu {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 100;
-      background-color: #333;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      font-size: 20px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    /* Estructura de la Sidebar (Oculta por defecto a la izquierda) */
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -250px;
-      width: 250px;
-      height: 100%;
-      background-color: #222;
-      padding-top: 20px;
-      transition: left 0.3s ease; /* Desplazamiento suave */
-      z-index: 99;
-    }
-
-    /* Estilo para el título del menú */
-    .sidebar-titulo {
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: bold;
-      text-transform: uppercase;
-      padding: 15px 25px;
-      margin-top: 40px; /* Espacio para que no choque con el botón ☰ */
-      border-bottom: 2px solid #444;
-      letter-spacing: 1px;
-    }
-
-    /* Listado de navegación */
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .sidebar ul li a {
-      display: block;
-      padding: 15px 25px;
-      color: #bbb;
-      text-decoration: none;
-      font-size: 16px;
-      border-bottom: 1px solid #333;
-    }
-
-    /* Cambio de color al pasar el cursor */
-    .sidebar ul li a:hover {
-      background-color: #333;
-      color: white;
-    }
-
-    /* Clase que activa la animación para mostrar la barra */
-    .sidebar.activa {
-      left: 0;
-    }
-
-    /* El visor donde se proyectarán tus páginas independientes */
+    /* El visor del iframe ocupa todo el fondo de la pantalla */
     .visor-paginas {
       width: 100%;
       height: 100%;
       border: none;
+      display: block;
+    }
+
+    /* Contenedor flotante invisible para la barra */
+    .navbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center; /* Centra el menú horizontalmente */
+      z-index: 100;
+      pointer-events: none; /* Evita que el contenedor invisible bloquee clics accidentales */
+      padding-top: 15px; /* Espacio opcional superior para que no pegue al borde */
+    }
+
+    /* Listado de navegación centralizado con transparencia (Solo ocupa el espacio necesario) */
+    .navbar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex; 
+      height: 45px;
+      /* Fondo oscuro sutil con alta transparencia (45%) para aprovechar el fondo */
+      background-color: rgba(20, 20, 20, 0.45); 
+      border-radius: 30px; /* Bordes redondeados para un diseño flotante más limpio */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px); /* Difumina ligeramente la imagen de fondo al pasar por detrás */
+      pointer-events: auto; /* Reactiva los clics dentro del menú */
+      overflow: hidden; /* Mantiene el diseño redondeado en las esquinas */
+      border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil transparente */
+    }
+
+    .navbar ul li {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .navbar ul li a {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 22px;
+      color: rgba(255, 255, 255, 0.7); /* Texto claro pero integrado */
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* Cambio de estado al pasar el cursor (foco interactivo elegante) */
+    .navbar ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.15); /* Resalte sutil */
+      color: #ffffff; /* Brillo completo al interactuar */
     }
   </style>
 </head>
 <body>
 
-  <button class="btn-menu" onclick="toggleSidebar()">☰</button>
-
-  <div class="sidebar" id="miSidebar">
-    <div class="sidebar-titulo">heredar la tierra</div>
-    
+  <div class="navbar">
     <ul>
-      <li><a href="PAG 1/Heredar.html" target="pantalla" onclick="toggleSidebar()">Página 1</a></li>
-      <li><a href="PAG 2/index.html" target="pantalla" onclick="toggleSidebar()">Página 2</a></li>
-      <li><a href="PAG 3/index.html" target="pantalla" onclick="toggleSidebar()">Página 3</a></li>
-      <li><a href="PAG 4/florecer.html" target="pantalla" onclick="toggleSidebar()">Página 4</a></li>
-      <li><a href="PAG 5/cosechar.html" target="pantalla" onclick="toggleSidebar()">Página 5</a></li>
+      <li><a href="PAG 1/Heredar.html" target="pantalla">Heredar la tierra</a></li>
+      <li><a href="PAG 2/index.html" target="pantalla">Cuerpo y territorio</a></li>
+      <li><a href="PAG 3/index.html" target="pantalla">Casa</a></li>
+      <li><a href="PAG 4/florecer.html" target="pantalla">Florecer</a></li>
+      <li><a href="PAG 5/cosechar.html" target="pantalla">Cosechar</a></li>
     </ul>
   </div>
 
   <iframe src="PAG%201/Heredar.html" name="pantalla" class="visor-paginas"></iframe>
-
-  <script>
-    function toggleSidebar() {
-      var sidebar = document.getElementById("miSidebar");
-      sidebar.classList.toggle("activa");
-    }
-  </script>
 
 </body>
 </html>

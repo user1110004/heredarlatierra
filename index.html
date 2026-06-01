@@ -11,9 +11,9 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; /* Evita scrolls dobles en la pantalla principal */
+      overflow: hidden;
       font-family: Arial, sans-serif;
-      position: relative; /* Permite posicionar la barra encima del iframe */
+      position: relative; 
     }
 
     /* El visor del iframe ocupa todo el fondo de la pantalla */
@@ -24,75 +24,93 @@
       display: block;
     }
 
-    /* Contenedor flotante invisible para la barra */
+    /* Contenedor del botón en la parte superior derecha */
     .navbar {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      display: flex;
-      justify-content: center; /* Centra el menú horizontalmente */
+      top: 15px;
+      right: 20px;
       z-index: 100;
-      pointer-events: none; /* Evita que el contenedor invisible bloquee clics accidentales */
-      padding-top: 15px; /* Espacio opcional superior para que no pegue al borde */
     }
 
-    /* Listado de navegación centralizado con transparencia (Solo ocupa el espacio necesario) */
-    .navbar ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex; 
+    /* Estilo para el botón dinámico único */
+    .btn-siguiente {
+      display: inline-flex;
+      align-items: center;
       height: 45px;
-      /* Fondo oscuro sutil con alta transparencia (45%) para aprovechar el fondo */
-      background-color: rgba(20, 20, 20, 0.45); 
-      border-radius: 30px; /* Bordes redondeados para un diseño flotante más limpio */
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(4px); /* Difumina ligeramente la imagen de fondo al pasar por detrás */
-      pointer-events: auto; /* Reactiva los clics dentro del menú */
-      overflow: hidden; /* Mantiene el diseño redondeado en las esquinas */
-      border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil transparente */
-    }
-
-    .navbar ul li {
-      display: flex;
-      align-items: center;
-      height: 100%;
-    }
-
-    .navbar ul li a {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      padding: 0 22px;
-      color: rgba(255, 255, 255, 0.7); /* Texto claro pero integrado */
+      padding: 0 25px;
+      background-color: rgba(20, 20, 20, 0.20); /* Alta transparencia (20%) */
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      color: rgba(255, 255, 255, 0.85);
       text-decoration: none;
       font-size: 13.5px;
       font-weight: 500;
       letter-spacing: 0.5px;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(4px);
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+      user-select: none;
     }
 
-    /* Cambio de estado al pasar el cursor (foco interactivo elegante) */
-    .navbar ul li a:hover {
-      background-color: rgba(255, 255, 255, 0.15); /* Resalte sutil */
-      color: #ffffff; /* Brillo completo al interactuar */
+    .btn-siguiente:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    .btn-siguiente:active {
+      transform: scale(0.98);
     }
   </style>
 </head>
 <body>
 
   <div class="navbar">
-    <ul>
-      <li><a href="PAG 1/Heredar.html" target="pantalla">Heredar la tierra</a></li>
-      <li><a href="PAG 2/index.html" target="pantalla">Cuerpo y territorio</a></li>
-      <li><a href="PAG 3/index.html" target="pantalla">Casa</a></li>
-      <li><a href="PAG 4/florecer.html" target="pantalla">Florecer</a></li>
-      <li><a href="PAG 5/cosechar.html" target="pantalla">Cosechar</a></li>
-    </ul>
+    <button id="btnSiguiente" class="btn-siguiente">Siguiente</button>
   </div>
 
-  <iframe src="PAG%201/Heredar.html" name="pantalla" class="visor-paginas"></iframe>
+  <iframe src="PAG 1/Heredar.html" name="pantalla" class="visor-paginas" id="iframePantalla"></iframe>
+
+  <script>
+    // 1. Lista secuencial de tus páginas
+    const paginas = [
+      { texto: "Heredar la tierra", url: "PAG 1/Heredar.html" },
+      { texto: "Cuerpo y territorio", url: "PAG 2/index.html" },
+      { texto: "Casa", url: "PAG 3/index.html" },
+      { texto: "Florecer", url: "PAG 4/florecer.html" },
+      { texto: "Cosechar", url: "PAG 5/cosechar.html" }
+    ];
+
+    // Iniciamos en 0 porque el iframe arranca mostrando "Heredar la tierra"
+    let indiceActual = 0;
+
+    const boton = document.getElementById('btnSiguiente');
+    const iframe = document.getElementById('iframePantalla');
+
+    // 2. Función encargada de calcular y pintar el texto de la página que viene después
+    function actualizarTextoBoton() {
+      // Calculamos cuál es la página que sigue a la actual
+      let indiceSiguiente = (indiceActual + 1) % paginas.length;
+      
+      // El botón muestra única y exclusivamente el nombre de esa página siguiente
+      boton.textContent = paginas[indiceSiguiente].texto;
+    }
+
+    // 3. Manejo del clic controlado por JavaScript
+    boton.addEventListener('click', function() {
+      // Avanzamos el índice a la página siguiente
+      indiceActual = (indiceActual + 1) % paginas.length;
+      
+      // Cambiamos el contenido del iframe a la nueva página activa
+      iframe.src = paginas[indiceActual].url;
+      
+      // Actualizamos el botón para que calcule y muestre la que vendrá después de esta
+      actualizarTextoBoton();
+    });
+
+    // Inicialización al cargar la web por primera vez
+    actualizarTextoBoton();
+  </script>
 
 </body>
 </html>
